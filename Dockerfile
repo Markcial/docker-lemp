@@ -12,8 +12,11 @@ RUN apt-get install -qy vim \
     php5-mysql \
     php5-fpm \
     nginx
-RUN echo "#!/bin/sh\nservice nginx start && service php5-fpm start && service mysql start" > /start.sh
-RUN echo "[supervisord]\nnodaemon=true\n\n[program:sshd]\ncommand=/usr/sbin/sshd -D\n\n[program:start]\ncommand=/start.sh" > /etc/supervisor/conf.d/supervisord.conf
-RUN chmod a+x /start.sh
+RUN mkdir -p /var/run/sshd /var/log/supervisor /var/www/html
+RUN echo "<?php\nphpinfo();" > /var/www/html/index.php
+COPY confs/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY confs/nginx/default.conf /etc/nginx/sites-enabled/default
+COPY confs/fpm/www.conf /etc/php5/fpm/pool.d/www.conf
+COPY confs/php/php.ini /etc/php5/fpm/php.ini
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]

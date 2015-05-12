@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo docker run -d --name lemper -p 8081:80 -v $(pwd)/httpdocs:/var/www/html lemp
